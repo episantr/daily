@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Chronicle — Today's Standup Lead</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,400;1,9..144,700&family=JetBrains+Mono:wght@400;500;600&family=Work+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --paper: #f3ede1;
+      --paper-warm: #ebe3d3;
+      --ink: #14100c;
+      --ink-soft: #3a332b;
+      --accent: #b8391f;
+      --accent-soft: #d8816e;
+      --subtle: #8a8175;
+      --line: #2a2219;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Work Sans", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Paper grain overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+      opacity: 0.07;
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: multiply;
+    }
+
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 3rem 2rem 4rem;
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ——— MASTHEAD ——— */
+    .masthead {
+      border-bottom: 3px double var(--line);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeDown 0.7s ease forwards;
+    }
+
+    .masthead-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--subtle);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(42, 34, 25, 0.2);
+    }
+
+    .masthead-meta-left,
+    .masthead-meta-right {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .masthead-meta-mid {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    .masthead-title {
+      font-family: "Fraunces", serif;
+      font-weight: 900;
+      font-size: clamp(2.3rem, 8vw, 6rem);
+      line-height: 0.88;
+      letter-spacing: -0.03em;
+      font-variation-settings: "opsz" 144, "SOFT" 0;
+      text-align: center;
+      color: var(--ink);
+    }
+
+    .masthead-tagline {
+      font-family: "Fraunces", serif;
+      font-style: italic;
+      font-weight: 400;
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      margin-top: 0.6rem;
+      letter-spacing: 0.03em;
+    }
+
+    /* ——— HERO ——— */
+    .hero-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 0;
+    }
+
+    .hero {
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.3s ease forwards;
+    }
+
+    .hero-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2rem;
+      display: inline-block;
+      border: 1.5px solid var(--accent);
+      padding: 0.55rem 1.4rem;
+    }
+
+    .hero-name {
+      font-family: "Fraunces", serif;
+      font-weight: 900;
+      font-size: clamp(3.5rem, 14vw, 10rem);
+      line-height: 0.92;
+      letter-spacing: -0.035em;
+      font-variation-settings: "opsz" 144;
+      color: var(--ink);
+      margin: 0.5rem 0;
+      display: block;
+    }
+
+    .hero-name.rolling {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--accent);
+    }
+
+    .hero-backup {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--subtle);
+      margin-top: 1.75rem;
+      opacity: 0;
+      animation: fadeIn 0.5s 1.4s ease forwards;
+    }
+
+    .hero-backup-name {
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+
+    .hero-rule {
+      display: block;
+      width: 140px;
+      height: 2px;
+      background: var(--accent);
+      margin: 2.25rem auto 1.5rem;
+      transform: scaleX(0);
+      transform-origin: center;
+      animation: slideIn 0.6s 1.2s ease forwards;
+    }
+
+    .hero-quote {
+      font-family: "Fraunces", serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.08rem;
+      color: var(--ink-soft);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.55;
+      opacity: 0;
+      animation: fadeIn 0.6s 1.6s ease forwards;
+    }
+
+    .hero-quote::before,
+    .hero-quote::after {
+      content: "\201C";
+      color: var(--accent);
+      font-size: 1.5rem;
+      font-weight: 900;
+      vertical-align: -0.1em;
+      margin: 0 0.15em;
+    }
+    .hero-quote::after { content: "\201D"; }
+
+    /* Closed state (weekend / holiday / full PTO) */
+    .closed-state {
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.3s ease forwards;
+    }
+
+    .closed-title {
+      font-family: "Fraunces", serif;
+      font-weight: 900;
+      font-size: clamp(3rem, 10vw, 7rem);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      font-variation-settings: "opsz" 144;
+      color: var(--ink);
+      margin-top: 0.5rem;
+    }
+
+    .closed-subtitle {
+      font-family: "Fraunces", serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--ink-soft);
+      margin-top: 1rem;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ——— FOOTER ——— */
+    .footer {
+      padding-top: 2rem;
+      border-top: 1px solid rgba(42, 34, 25, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--subtle);
+      opacity: 0;
+      animation: fadeIn 0.6s 1.2s ease forwards;
+    }
+
+    .footer-quote {
+      font-family: "Fraunces", serif;
+      font-style: italic;
+      font-weight: 400;
+      letter-spacing: 0;
+      text-transform: none;
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+    }
+
+    /* ——— ANIMATIONS ——— */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(25px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes slideIn {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+      .container { padding: 2rem 1.25rem 3rem; }
+      .masthead-meta { font-size: 0.65rem; flex-direction: column; gap: 0.5rem; }
+      .masthead-meta-left, .masthead-meta-right { gap: 1rem; }
+      .hero-backup { font-size: 0.72rem; letter-spacing: 0.18em; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <!-- MASTHEAD -->
+    <header class="masthead">
+      <div class="masthead-meta">
+        <div class="masthead-meta-left">
+          <span id="issue-number">NO. 001</span>
+          <span id="date-stamp">—</span>
+        </div>
+        <div class="masthead-meta-mid">
+          <span class="dot"></span>
+          <span>LIVE</span>
+        </div>
+        <div class="masthead-meta-right">
+          <span>THE CARD CORE SOLUTIONS SQUAD GAZETTE</span>
+          <span>VOL. I</span>
+        </div>
+      </div>
+      <h1 class="masthead-title">The Daily Chronicle</h1>
+      <p class="masthead-tagline">A morning serial for your daily stand-up</p>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero-wrap" id="hero"></section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <span id="footer-left">EST. 2026</span>
+      <span class="footer-quote">10:15 sharp — coffee's brewed, meeting's on.</span>
+      <span id="footer-right">DEV. BY SQUAD</span>
+    </footer>
+  </main>
+
+  <script>
+    // ═════════════════════════════════════════════════════════════════
+    //  ⚙️  CONFIG — edit only this block
+    // ═════════════════════════════════════════════════════════════════
+
+    // 1) Team members
+    const TEAM = [
+      "Konul",
+      "Rena",
+      "Balay",
+      "Rahile",
+      "Nijat",
+      "Nurana"
+    ];
+
+    // 2) Optional per-person quote (cycles through the list if there
+    //    are fewer quotes than team members)
+    const QUOTES = [
+      "I'm running today — we'll keep it short.",
+      "Grab your coffee, we're starting.",
+      "Morning, everyone — let's dive in.",
+      "Aiming for five minutes, max.",
+      "Can't wait to hear today's blockers."
+    ];
+
+    // 3) What hour the selection flips over (0–23, local time)
+    //    9  → a new day starts at 09:00; overnight still shows yesterday
+    //    0  → flips at midnight (classic calendar behavior)
+    const CUTOVER_HOUR = 9;
+
+    // 4) Public holidays — the "Press Closed" screen shows on these days
+    //    Format: "YYYY-MM-DD": "Holiday name"
+    //    Pre-populated with Azerbaijan's 2026 non-working days (workdays only;
+    //    holidays on weekends are covered automatically by the weekend state).
+    //    Source: timeanddate.com + AZAL 2026 non-working day decree notes.
+    const HOLIDAYS = {
+      "2026-01-01": "New Year's Day",
+      "2026-01-02": "New Year's Holiday",
+      "2026-01-20": "Martyrs' Day",
+      "2026-03-09": "Day off for Women's Day",
+      "2026-03-20": "Novruz Holiday",
+      "2026-03-23": "Novruz Holiday",
+      "2026-03-24": "Novruz Holiday",
+      "2026-03-25": "Novruz Holiday (extended)",
+      "2026-03-26": "Novruz Holiday (extended)",
+      "2026-03-27": "Novruz Holiday (extended)",
+      "2026-03-30": "Novruz Holiday (extended)",
+      "2026-05-11": "Day off for Victory Day over Fascism",
+      "2026-05-27": "Feast of the Sacrifice (Gurban)",
+      "2026-05-28": "Republic Day / Gurban Holiday",
+      "2026-06-15": "Day of National Salvation",
+      "2026-06-26": "Armed Forces Day",
+      "2026-11-09": "State Flag Day / Victory Day observed",
+      "2026-12-31": "World Azerbaijanis Solidarity Day"
+      // Add company-specific closures (all-hands, demo days, retreats) here.
+    };
+
+    // 5) Per-person leave / unavailability
+    //    Format: "YYYY-MM-DD": ["Name1", "Name2"]
+    //    These people are excluded from both the primary and backup pool on that date.
+    const UNAVAILABLE = {
+      // "2026-04-27": ["Aysel"],
+      // "2026-04-28": ["Aysel", "Rashad"]
+    };
+
+    // ═════════════════════════════════════════════════════════════════
+
+    // Epoch for the issue number
+    const EPOCH = new Date("2026-01-01");
+
+    const EN_DAYS = [
+      "Sunday", "Monday", "Tuesday", "Wednesday",
+      "Thursday", "Friday", "Saturday"
+    ];
+    const EN_MONTHS = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    // ——— Helpers ———
+    function toKey(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    // Deterministic hash (FNV-1a). Suffix allows independent streams.
+    function hashDate(date, suffix = "") {
+      const key = toKey(date) + suffix;
+      let h = 2166136261;
+      for (let i = 0; i < key.length; i++) {
+        h ^= key.charCodeAt(i);
+        h = (h * 16777619) >>> 0;
+      }
+      return h;
+    }
+
+    function isWeekend(date) {
+      const d = date.getDay();
+      return d === 0 || d === 6;
+    }
+
+    function isHoliday(date) {
+      return HOLIDAYS[toKey(date)] || null;
+    }
+
+    function availableTeam(date) {
+      const offList = UNAVAILABLE[toKey(date)] || [];
+      return TEAM.filter((n) => !offList.includes(n));
+    }
+
+    // "Effective" date respects CUTOVER_HOUR — before the cutover we're
+    // still on the previous calendar day.
+    function effectiveDate(now) {
+      const d = new Date(now);
+      if (now.getHours() < CUTOVER_HOUR) {
+        d.setDate(d.getDate() - 1);
+      }
+      d.setHours(12, 0, 0, 0); // normalize
+      return d;
+    }
+
+    function previousWorkday(date) {
+      const d = new Date(date);
+      do {
+        d.setDate(d.getDate() - 1);
+      } while (isWeekend(d) || isHoliday(d));
+      return d;
+    }
+
+    // ——— Selection ———
+    function pickPrimary(date) {
+      const pool = availableTeam(date);
+      if (pool.length === 0) return null;
+
+      let idx = hashDate(date) % pool.length;
+
+      // Avoid consecutive repeats based on previous workday's pick
+      if (pool.length > 1) {
+        const prev = previousWorkday(date);
+        const prevPool = availableTeam(prev);
+        if (prevPool.length > 0) {
+          const prevName = prevPool[hashDate(prev) % prevPool.length];
+          if (pool[idx] === prevName) {
+            idx = (idx + 1) % pool.length;
+          }
+        }
+      }
+      return pool[idx];
+    }
+
+    function pickBackup(date, primary) {
+      const pool = availableTeam(date).filter((n) => n !== primary);
+      if (pool.length === 0) return null;
+      return pool[hashDate(date, "::backup") % pool.length];
+    }
+
+    // ——— Formatting ———
+    function formatDate(date) {
+      const d = EN_DAYS[date.getDay()];
+      const day = date.getDate();
+      const m = EN_MONTHS[date.getMonth()];
+      const y = date.getFullYear();
+      return `${d}, ${m} ${day}, ${y}`;
+    }
+
+    function issueNumber(date) {
+      const days = Math.floor((date - EPOCH) / 86400000);
+      return "NO. " + String(Math.max(1, days + 1)).padStart(3, "0");
+    }
+
+    // ——— Render ———
+    function renderMasthead(date) {
+      document.getElementById("issue-number").textContent = issueNumber(date);
+      document.getElementById("date-stamp").textContent = formatDate(date).toUpperCase();
+      document.getElementById("footer-left").textContent = "EST. " + EPOCH.getFullYear();
+    }
+
+    function renderClosed(title, subtitle) {
+      const hero = document.getElementById("hero");
+      hero.innerHTML = `
+        <div class="closed-state">
+          <div class="hero-label" style="margin-bottom: 1.5rem;">Press Closed</div>
+          <h2 class="closed-title">${title}</h2>
+          <p class="closed-subtitle">${subtitle}</p>
+        </div>
+      `;
+    }
+
+    function renderHero(date) {
+      const primary = pickPrimary(date);
+
+      if (!primary) {
+        renderClosed(
+          "Full House Off",
+          "Nobody in the pool today — the whole team appears to be out."
+        );
+        return;
+      }
+
+      const backup = pickBackup(date, primary);
+      const quoteIdx = TEAM.indexOf(primary);
+      const quote =
+        QUOTES[((quoteIdx >= 0 ? quoteIdx : 0) % QUOTES.length)];
+
+      const hero = document.getElementById("hero");
+      hero.innerHTML = `
+        <div class="hero">
+          <div class="hero-label">Today's Facilitator</div>
+          <span class="hero-name rolling" id="hero-name">${TEAM[0]}</span>
+          ${
+            backup
+              ? `<div class="hero-backup">Standby · <span class="hero-backup-name">${backup}</span></div>`
+              : ""
+          }
+          <span class="hero-rule"></span>
+          <p class="hero-quote">${quote}</p>
+        </div>
+      `;
+
+      // Slot-machine reveal animation
+      const el = document.getElementById("hero-name");
+      let ticks = 0;
+      const maxTicks = 14;
+      const interval = setInterval(() => {
+        el.textContent = TEAM[Math.floor(Math.random() * TEAM.length)];
+        ticks++;
+        if (ticks >= maxTicks) {
+          clearInterval(interval);
+          el.textContent = primary;
+          el.classList.remove("rolling");
+        }
+      }, 70);
+    }
+
+    // ——— Init ———
+    const now = new Date();
+    const today = effectiveDate(now);
+    renderMasthead(today);
+
+    const holidayName = isHoliday(today);
+    if (isWeekend(today)) {
+      renderClosed("Weekend", "The press is closed. Back on Monday.");
+    } else if (holidayName) {
+      renderClosed("Holiday", holidayName);
+    } else {
+      renderHero(today);
+    }
+  </script>
+</body>
+</html>
